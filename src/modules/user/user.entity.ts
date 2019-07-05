@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Unique, OneToMany, getRepository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
-import { Todo } from './todo.entity';
+import { Todo } from '../todo/todo.entity';
 
 @Entity()
 @Unique(["username"])

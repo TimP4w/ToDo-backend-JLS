@@ -9,7 +9,9 @@ import * as helmet from "helmet";
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(cors());
-  //app.use(helmet);
+  app.use(helmet());
   await app.listen(3000);
+
+  // app.connectMicroservice(secondServiceOptions)
 }
 bootstrap();
