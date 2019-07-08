@@ -1,4 +1,4 @@
-export class newTodoDto {
+export class createTodoDto {
     readonly title: string;
     readonly date: Date;
 }
