@@ -6,14 +6,16 @@ import { JwtStrategy } from '../../strategies/jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserSchema } from '../user/user.schema';
+import  * as fs from 'fs';
 
 
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
-      secret: '8bM@$D$NHp8ZS9BV*CXrt$heUtACoC7Y#7MGWC3oa*Kg5nB%r&cboxmv7XtEi^U@BD%8tt!#WsTqzL#T#w&I!V6q2I%gsFCR#InkpV2DS!cyoGfNjD*4QS9FDp499#@6',
+      privateKey: fs.readFileSync("./keys/jwt.private.key"),
       signOptions: {
+        algorithm: 'RS512',
         expiresIn: 60 * 20,
       },
     },),
