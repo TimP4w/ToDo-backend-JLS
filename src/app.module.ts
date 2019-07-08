@@ -1,7 +1,7 @@
-import { Module } from '@nestjs/common';
+import { Module, MiddlewareConsumer } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { RouterModule, Route } from 'nest-router';
+import { RouterModule } from 'nest-router';
 import { routes } from './routes';
 
 import { AuthModule } from './modules/auth/auth.module'
@@ -10,6 +10,7 @@ import { TodoModule } from './modules/todo/todo.module'
 
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { MongooseModule } from '@nestjs/mongoose';
+import { RefreshTokenMiddleware } from './middlewares/refreshToken.middleware';
 
 @Module({
   imports: [
@@ -28,4 +29,10 @@ import { MongooseModule } from '@nestjs/mongoose';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(RefreshTokenMiddleware)
+      .forRoutes('');
+  }
+}

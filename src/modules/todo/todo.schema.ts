@@ -28,4 +28,10 @@ todoSchema.pre('save', function (next) {
     return next();
 });
 
+todoSchema.pre('update', function (next) {
+    this.updatedAt = new Date();   
+    return next();
+});
+
+
 export const TodoSchema = todoSchema;

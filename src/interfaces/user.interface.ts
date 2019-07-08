@@ -7,5 +7,6 @@ export interface User extends mongoose.Document {
     password: string,
     updatedAt: Date,
     createdAt: Date,
+    refreshToken: string,
     todos: Todo[],
 }

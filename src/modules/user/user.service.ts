@@ -1,20 +1,20 @@
-import { Injectable, HttpException } from '@nestjs/common';
+import { Injectable, HttpException, Inject, forwardRef } from '@nestjs/common';
 import { Model } from 'mongoose';
 
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from "bcryptjs";
 
 import { User } from '../../interfaces/user.interface';
 import { UserDto } from './dtos/user.dto';
 
 import { InjectModel } from '@nestjs/mongoose';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class UserService {
     constructor(
        // @InjectRepository(User) private userRepository: Repository<User>,
-        @InjectModel('User') private readonly userModel: Model<User>
+        @InjectModel('User') private readonly userModel: Model<User>,
+        @Inject(forwardRef(() => AuthService)) private readonly authService: AuthService
 
     ) {}
 
@@ -31,21 +31,14 @@ export class UserService {
 
         let newUser = {
             username: user.username,
-            password: bcrypt.hashSync(user.password, 8)
+            password: bcrypt.hashSync(user.password, 8),
+            refreshToken: this.authService.generateRefreshToken(user.username)
         }; 
 
         const createdUser = new this.userModel(newUser)
         return await createdUser.save();
     }
 
-/*     async getUserById(id: number): Promise<User> {
-        let user: User;
-        user = await this.userRepository.findOne(id, {
-            relations: ["todos"]
-        });
-        return user;
-    }
-*/
     async getUserByUsername(username: string): Promise<User> {
         let user: User;
         user = await this.userModel.findOne({username: username});
