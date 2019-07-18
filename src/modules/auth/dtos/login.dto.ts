@@ -1,7 +1,5 @@
 export class LoginDto {
-    readonly tokens: {
-        jwtToken: string,
-        refreshToken: string,
-    };
+    readonly jwtToken: string;
+    readonly  refreshToken: string;
     readonly expiresIn: number;
 }

@@ -11,14 +11,8 @@ export class AuthController {
   @Post('/login')
   async login(@Body() user: UserLoginDto): Promise<LoginDto> {
     try {
-      const tokens = await this.authService.signIn(user.username, user.password);
-      let response = {
-        tokens, 
-        expiresIn: 60 * 20 //20 min
-      }
-      return response;
+      return await this.authService.signIn(user.username, user.password);
     } catch(err) {
-      console.log(err);
       throw new HttpException(err.response, err.status);
     }
   } 

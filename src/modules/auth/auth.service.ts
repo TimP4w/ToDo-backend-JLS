@@ -9,6 +9,8 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from '../../interfaces/jwt-payload.interface';
 import { User } from '../../interfaces/user.interface';
 import * as bcrypt from 'bcryptjs';
+import { response } from 'express';
+import { LoginDto } from '../auth/dtos/login.dto';
 
 
 @Injectable()
@@ -61,10 +63,9 @@ export class AuthService {
       } else {
         throw new UnauthorizedException();    
       }
-    
     }
 
-    async signIn(username: string, password: string): Promise<{jwtToken: string, refreshToken: string}> {
+    async signIn(username: string, password: string): Promise<LoginDto> {
       if(!username || !password) {
         throw new HttpException("Username and password cannot be empty", 400);
       }
@@ -74,26 +75,18 @@ export class AuthService {
         jwtToken = this.generateToken(user);
         refreshToken = this.generateRefreshToken(user.username);
         try {
-          await this.userModel.findOneAndUpdate({username: user.username}, {$set: {'refreshToken': refreshToken}}).exec();
-          return {jwtToken, refreshToken};
+          await this.userModel.findOneAndUpdate({username: user.username}, {$set: {'refreshToken': refreshToken}});
+          let tokens = {
+            jwtToken, 
+            refreshToken, 
+            expiresIn: 60 * 20//20 min
+          }
+          return tokens;
         } catch(e) {
           throw new HttpException("Error while updating user refresh token", 500);
         }
       } else {
         throw new UnauthorizedException();    
-      }
-    }
-
-    async getUserByUsername(username: string): Promise<User> {
-      let user: User;
-      try {
-        user = await this.userModel.findOne({username: username});
-        if(!user) {
-          throw new HttpException("User not found", 404);
-        }
-        return user;
-      } catch(e) {
-        throw new HttpException("Error retrieving user", 500);
       }
     }
 
